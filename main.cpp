@@ -33,6 +33,10 @@ T min(T a, T b){
 	}
 	else return a;
 }
+template<class T>
+bool is_zero(T x){
+	return x < 0.00001;
+}
 
 class route{
 public:
@@ -43,6 +47,7 @@ public:
 	vector<int> B;
 	vector<int> D;
 	vector<int> W;
+	bool fea;
 
 	int duration;
 	double f;
@@ -68,7 +73,7 @@ public:
 class solution{
 public:
 	double total_f;
-	bool feasible;
+	vector<bool> fea;
 	vector<int> trace;//the index of route which this request is assigned to
 
 	vector<double> f;
@@ -77,6 +82,8 @@ public:
 	
 
 };
+
+
 
 class raw{
 public:
@@ -363,6 +370,60 @@ public:
 		}
 		rout.insert(rout.begin() + pos, v);
 	}
+
+	void simple_insertion_2(vector<int> rout, int v){
+		int va, vb;
+		if (input[v + n].l - input[v + n].e > input[v].l - input[v].e){
+			va = v;
+			vb = v + n;
+		}
+		else
+		{
+			vb = v;
+			va = v + n;
+		}
+		simple_insertion_1(rout, va);
+		simple_insertion_1(rout, vb);
+	}
+
+	bool is_fea(solution s){
+		for (int i = 0; i < s.rout.size(); i++){
+			if (!s.fea[i]){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool is_fea_ret(route r){
+		return is_zero(r.q) && is_zero(r.d) && is_zero(r.w) && is_zero(r.t);
+	}
+
+	double total_f(solution s){
+		double f = 0;
+		for (int i = 0; i < s.rout.size(); i++){
+			route r = route_evaluation(s.rout[i]);
+			s.fea.push_back(is_fea_ret(r));
+			s.f.push_back(objective_f(r));
+			f += s.f[i];
+		}
+		return f;
+	}
+
+	void solve(){
+		alpha = 10;
+		beta = 0.1;
+		gamma = 1;
+		tau = 1;
+		delta = 0.1;
+		f = 0;
+		solution s = gen_init_ramdon();
+
+		int iter_best, iter_end = 400;
+		int iter_internal = 10;
+		
+	}
+
 };
 
 void main(){
