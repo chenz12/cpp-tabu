@@ -64,7 +64,7 @@ bool tis_zero(T x){
 	return x < 0.00001;
 }
 
-vector<int> tremove(vector<int> a, int i) {
+vector<int> tremove(vector<int> &a, int i) {
 	for (vector<int>::iterator it = a.begin(); it != a.end(); it++) {
 		if (*it == i) {
 			it = a.erase(it);
@@ -414,11 +414,11 @@ public:
 		{
 			right = vb;
 		}
-		int m = 0, pos,f;
+		int m = 0, pos;
+		double f;
 		for (int i = left; i <= right; i++)
 		{
-			vector<int> te(rout.size());
-			te=routecopy(rout);
+			vector<int> te = rout;
 			te.insert(te.begin() + i, v);
 			f = objective_f(te);
 			
@@ -466,6 +466,7 @@ public:
 			s.f[i]=objective_f(r);
 			f += s.f[i];
 		}
+		s.total_f = f;
 		return f;
 	}
 
@@ -478,10 +479,10 @@ public:
 		f = 0;
 		solution s = gen_init_ramdon();
 
-		int iter_best, iter_end = 400;
+		int iter_best, iter_end = 40;
 		int iter_internal = 10;
 		int theta = iter_end / 40;
-		int lambda = 10;
+		int lambda = 100;
 		for (int i = 0; i < n+1; i++){
 			vector<int> tem(m);
 			for (int j = 0; j < m; j++){
@@ -492,7 +493,7 @@ public:
 
 		for (int iter = 0; iter < iter_end; iter++){
 			f = total_f(s);
-			double minf = 10000000000;
+			double minf = 10000;
 			int mini = -1;
 			int minj = -1;
 			double newf;
@@ -511,8 +512,8 @@ public:
 					vector<int>* s1 = &s.rout[k1];
 					double f00 = s.f[k0];
 					double f10 = s.f[k1];
-					vector<int> r0 = routecopy(*s0);
-					vector<int> r1 = routecopy(*s1);
+					vector<int> r0 = *s0;
+					vector<int> r1 = *s1;
 					tremove(r0, i);
 					tremove(r0, i + n);
 					simple_insertion_2(r1, i);
@@ -555,10 +556,10 @@ public:
 			if (iter%iter_internal == 0){
 				cout << "internal iter"<<endl;
 				for (int k = 1; k <=n; k++){
-					vector<int> ss = s.rout[s.trace[k]];
-					tremove(ss, k);
-					tremove(ss, k + n);
-					simple_insertion_2(ss, k);
+					vector<int> *ss = &s.rout[s.trace[k]];
+					tremove(*ss, k);
+					tremove(*ss, k + n);
+					simple_insertion_2(*ss, k);
 				}
 			}
 			f = total_f(s);
@@ -569,6 +570,7 @@ public:
 				if (!bestfound || bestf>f){
 					bestfound = true;
 					bestf = f;
+					bests = s;
 					//time_best = time();
 
 					iter_best = iter;
@@ -628,12 +630,13 @@ void main(){
 	tabu a = tabu();
 	solution t = a.gen_init_ramdon();
 	a.tsolve();
-	
-	/*for (int i = 0; i < 20; i++){
-		cout << "cost£º" << a.objective_f(a.route_evaluation(t.rout[0])) << endl;
+	/*
+	for (int i = 0; i < 20; i++){
+		cout << "cost1£º" << a.objective_f(t.rout[0]) << endl;
+		cout << "cost2£º" << a.objective_f(a.route_evaluation(t.rout[0])) << endl;
 		cout << "feasible: " << a.is_fea_ret(a.route_evaluation(t.rout[0])) << endl;
-	}*/
-	cout << 1;
+	}
+	cout << 1;*/
 	system("pause");
 	/*
 	vector<int> myints = { 10, 20, 30, 40 };

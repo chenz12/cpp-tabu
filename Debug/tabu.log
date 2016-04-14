@@ -1,4 +1,4 @@
-﻿生成启动时间为 2016/4/13 22:06:21。
+﻿生成启动时间为 2016/4/14 21:45:25。
      1>项目“C:\Users\panzer\documents\visual studio 2013\Projects\tabu\tabu\tabu.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          D:\软件\visualstudio\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _SCL_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -9,11 +9,11 @@
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(351): warning C4018: “<”: 有符号/无符号不匹配
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(352): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(368): warning C4018: “<”: 有符号/无符号不匹配
-     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(423): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(426): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(449): warning C4018: “<”: 有符号/无符号不匹配
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(463): warning C4018: “<”: 有符号/无符号不匹配
-     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(590): warning C4018: “<”: 有符号/无符号不匹配
-     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(612): warning C4018: “<”: 有符号/无符号不匹配
+     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(592): warning C4018: “<”: 有符号/无符号不匹配
+     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(614): warning C4018: “<”: 有符号/无符号不匹配
      1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(24): warning C4018: “<”: 有符号/无符号不匹配
                  c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(407): 参见对正在编译的函数 模板 实例化“int tindexof<int>(std::vector<int,std::allocator<_Ty>>,T)”的引用
                  with
@@ -28,4 +28,4 @@
 
 生成成功。
 
-已用时间 00:00:01.51
+已用时间 00:00:01.09
