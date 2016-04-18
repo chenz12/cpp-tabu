@@ -7,6 +7,7 @@
 #include <time.h>
 
 using namespace std;
+clock_t start_t, end_t;
 
 
 class dpair{
@@ -51,6 +52,15 @@ T dmax(T a, T b){
 	}
 	else return b;
 }
+
+double dmax(double a, int b){
+	if (a > b)
+	{
+		return a;
+	}
+	else return (double)b;
+}
+
 template<class T>
 T dmin(T a, T b){
 	if (a > b)
@@ -82,25 +92,35 @@ vector<T> routecopy(vector<T> a) {
 	return res;
 }
 
+double sum_vec(vector<double> a, int x){
+	double res = 0;
+	for (vector<double>::iterator it = a.begin()+x-1; it!= a.end()-1; it++){
+		res += *it;
+	}
+	return res;
+}
 
 
 class route{
 public:
-	vector<int> T;
-	vector<int> e;
-	vector<int> l;
-	vector<int> A;
-	vector<int> B;
-	vector<int> D;
-	vector<int> W;
+	vector<double> T;
+	vector<double> e;
+	vector<double> l;
+	vector<double> A;
+	vector<double> B;
+	vector<double> D;
+	vector<double> W;
+	vector<double> L;
+	vector<double> P;
+
 	bool fea;
 
 	int duration;
 	double f;
-	int q;
-	int d;
-	int w;
-	int t;
+	double q;
+	double d;
+	double w;
+	double t;
 	route(){
 		f = 0;
 		q = 0;
@@ -186,11 +206,12 @@ public:
 	double bestf;
 	solution bests;
 
+	string nam;
 
 
-
-	tabu(void){
-		ifstream in("pr01", ios::in);
+	tabu(string fi){
+		nam = fi;
+		ifstream in(fi, ios::in);
 		string inp;
 		initial_tabu(in);
 			for (int j = 0; j <=n;j++)
@@ -279,49 +300,64 @@ public:
 	}
 
 	route route_evaluation(vector<int> a){
-		route ret = route();
-		for (size_t i = 0; i < a.size(); i++)
+		route ret;
+		int size = a.size();
+		/*for (size_t i = 0; i < size; i++)
 		{
 			ret.e.push_back(input[a[i]].e);
 			ret.l.push_back(input[a[i]].l);
 			ret.T.push_back(0);
-		}
+		}*/
+		ret.T.resize(size);
 		int QK = input[a[0]].q;
 		
 		vector<int> _D(2 * n + 1);
-		vector<int> A(a.size());
-		vector<int> B(a.size());
-		vector<int> D(a.size());
-		vector<int> W(a.size());
+		vector<double> A(size);
+		vector<double> B(size);
+		vector<double> D(size);
+		vector<double> W(size);
+		
 
 		A[0] = input[a[0]].e;
 		B[0] = A[0];
 		D[0] = B[0] + input[a[0]].d;
 		W[0] = 0;
-		
-		for (size_t i = 1; i < a.size();i++)
+		int count = 1;
+		vector<int>::iterator ia = a.begin() + 1;
+
+		for (vector<double>::iterator ita = A.begin() + 1, itb = B.begin() + 1, itd = D.begin() + 1, itw = W.begin() + 1; ita != A.end(); ita++, itb++, itd++, itw++)
 		{
-			A[i] = D[i - 1] + t[a[i - 1]][a[i]];
-			B[i] = dmax(A[i], input[a[i]].e);
-			D[i] = B[i] + input[a[i]].d;
-			W[i] = input[a[i]].e - A[i];
-			if (W[i]<0){
-				W[i] = 0;
+
+			*ita = *(itd-1) + t[*(ia-1)][*ia];
+			
+			*itb = dmax(*ita, input[*ia].e);
+			*itd = *itb + input[*ia].d;
+			*itw = input[*ia].e - *ita;
+			if (*itw<0){
+				*itw = 0;
 			}
-			if (a[i] > 0 && a[i] <= n){
-				_D[a[i]] = D[i];
+			if (*ia > 0 && *ia <= n){
+				_D[*ia] = *itd;
 			}
-			if (a[i]>n){
-				ret.T[i] = B[i] - _D[a[i] - n];
+			if (*ia>n){
+				ret.T[count] = *itb - _D[*ia - n];
 			}
+			count++;
+			ia++;
 		}
+		ia = a.begin();
+		count = 1;
 		//for 循环为debug内部
-		for (int j = 0; j < a.size(); j++){
-			int F0 = -1;
+
+		vector<double>::iterator itw = W.begin(), ita = A.begin(), itb = B.begin(), itd = D.begin();
+
+
+		for (int j = 0; j < size; j++){
+			double F0 = -1;
 			int WSum = 0;
-			for (int i = j; i < a.size(); i++){
+			for (int i = j; i < size; i++){
 				WSum += W[i];
-				int _F0 = input[a[i]].l - B[i];
+				double _F0 = input[a[i]].l - B[i];
 				if (a[i]>n){
 					int _WSum = 0;
 					for (int k = i; k >= j&&a[k] + n != a[i]; k--){
@@ -333,7 +369,7 @@ public:
 						}
 					}
 				}
-					if (i == a.size() - 1){
+					if (i == size - 1){
 						_F0 = 0;
 					}
 					_F0 = WSum + dmax(0, _F0);
@@ -341,13 +377,44 @@ public:
 						F0 = _F0;
 					}
 			}
-			A[j] += F0;
-			B[j] = dmax(A[j], input[a[j]].e);
-			D[j] = B[j] + input[a[j]].d;
-			W[j] = dmax(0, input[a[j]].e - A[j]);
-			if (a[j] > 0 && a[j] <= n){
-				_D[a[j]] = D[j];
+
+			*ita += F0;
+			//*itb = *itb;
+			*itb = dmax(*ita, input[*ia].e);
+			//*itb += F0;
+			*itd = *itb + input[*ia].d;
+			*itw = dmax(0, input[*ia].e - *ita);
+			if (*ia > 0 && *ia <= n){
+				_D[*ia] = *itd;
 			}
+
+			
+			vector<double>::iterator itw1 = W.begin()+j+1, ita1 = A.begin()+j+1, itb1 = B.begin()+j+1, itd1 = D.begin()+j+1;
+			vector<int>::iterator iatp1 = a.begin() + j + 1;
+			for (int i = j + 1; i < size; i++){
+				*ita1 = *(itd1-1) + t[*(iatp1-1)][*iatp1];
+				*itb1 = dmax(*ita1, input[*iatp1].e);
+				*itd1 = *itb1 + input[*iatp1].d;
+				*itw1 = input[*iatp1].e - *ita1;
+				if (*itw1 < 0){
+					*itw1 = 0;
+				}
+				if (*iatp1 > 0 && *iatp1 <= n){
+					_D[*iatp1] = *itd1;
+				}
+				if (*iatp1 > n){
+					ret.T[i] = *itb1 - _D[*iatp1 - n];
+				}
+
+				ita1++;
+				itb1++;
+				itd1++;
+				itw1++;
+				iatp1++;
+			}
+			
+			/*
+			
 			for (int i = j + 1; i < a.size(); i++){
 				A[i] = D[i - 1] + t[a[i - 1]][a[i]];
 				B[i] = dmax(A[i], input[a[i]].e);
@@ -363,29 +430,47 @@ public:
 					ret.T[i] = B[i] - _D[a[i] - n];
 				}
 			}
-		}
-		//debug 结束
-		for (int i = 1; i < a.size(); i++){
-			ret.f += c[a[i - 1]][a[i]];
+			*/
 			
-			QK += input[a[i]].q;
+
+
+			ita++;
+			itb++;
+			itd++;
+			itw++;
+			ia++;
+
+
+
+		}
+		B[0] = B[1] - t[a[0]][a[1]];
+		A[0] = B[0];
+		D[0] = B[0];
+		//debug 结束
+		ia = a.begin() + 1;
+		for (vector<double>::iterator itb = B.begin()+1,itt = ret.T.begin()+1,itd=D.begin()+1; itb!=B.end(); itb++,itt++,itd++){
+			
+			ret.f += c[*(ia-1)][*ia];
+			
+			QK += input[*ia].q;
 			if (QK > Q){
 				ret.q += QK - Q;
 			}
-			if (B[i] > input[a[i]].l){
-				ret.w += B[i] - input[a[i]].l;
+			if (*itb > input[*ia].l){
+				ret.w += *itb - input[*ia].l;
 			}
-			if (a[i] > 0 && a[i] <= n){
-				_D[a[i]] = D[i];
+			if (*ia > 0 && *ia <= n){
+				_D[*ia] = *itd;
 			}
-			if (a[i] > n){
-				ret.T[i] = B[i] - _D[a[i] - n];
-				if (ret.T[i] > L){
-					ret.t += ret.T[i] - L;
+			if (*ia > n){
+				*itt = *itb - _D[*ia - n];
+				if (*itt > L){
+					ret.t += *itt - L;
 				}
 			}
+			ia++;
 		}
-		ret.duration = B[a.size() - 1] - B[0];
+		ret.duration = B[size - 1] - B[0];
 		if (ret.duration > T){
 			ret.d = ret.duration - T;
 		}
@@ -398,6 +483,142 @@ public:
 		return ret;
 	}
 
+	route route_evaluation_new(vector<int> a){
+		route ret;
+
+		for (size_t i = 0; i < a.size(); i++)
+		{
+			ret.e.push_back(input[a[i]].e);
+			ret.l.push_back(input[a[i]].l);
+		}
+		vector<double> _D(2 * n + 1);
+
+		ret.A.resize(a.size());
+		ret.B.resize(a.size());
+		ret.D.resize(a.size());
+		ret.W.resize(a.size());
+		ret.P.resize(a.size());
+
+		ret.A[0] = input[a[0]].e;
+		ret.B[0] = ret.A[0];
+		ret.D[0] = ret.B[0] + input[a[0]].d;
+		ret.W[0] = 0;
+		ret.P[0] = 0;
+		for (size_t i = 1; i < a.size(); i++){
+			ret.A[i] = ret.D[i - 1] + t[a[i - 1]][a[i]];
+			ret.B[i] = dmax(ret.A[i], input[a[i]].e);
+			ret.D[i] = ret.B[i] + input[a[i]].d;
+			_D[a[i]] = ret.D[i];
+			ret.W[i] = ret.B[i] - ret.A[i];
+		}
+		for (size_t i = 1; i < a.size(); i++){
+			if (a[i] > n || a[i] == 0){
+				ret.P[i] = 0;
+			}
+			else{
+				ret.P[i] = -ret.B[i] + _D[a[i] + n];
+			}
+		}
+
+		ret.D[0] = input[a[0]].e + dmin(F_new(0, a.size()-1, a, ret), sum_vec(ret.W, 1));
+		for (size_t i = 1; i < a.size(); i++){
+			ret.A[i] = ret.D[i - 1] + t[a[i - 1]][a[i]];
+			ret.B[i] = dmax(ret.A[i], input[a[i]].e);
+			ret.D[i] = ret.B[i] + input[a[i]].d;
+			_D[a[i]] = ret.D[i];
+			ret.W[i] = ret.B[i] - ret.A[i];
+		}
+
+		for (size_t i = 1; i < a.size(); i++){
+			if (0 < a[i] && a[i] <= n){
+				ret.P[i] = -ret.B[i] + _D[a[i] + n];
+			}
+		}
+
+		for (size_t i = 1; i < a.size()-1; i++){
+			if (a[i]>n||a[i]==0){ continue; }
+			double Fi = F_new(i, a.size()-1, a, ret);
+			ret.B[i] += dmin(Fi, sum_vec(ret.W, i + 1));
+			ret.D[i] = ret.B[i] + input[a[i]].d;
+			_D[a[i]] = ret.D[i];
+			ret.P[i] = -ret.B[i] + _D[a[i] + n];
+			for (int j = i + 1; j < a.size(); j++){
+				ret.A[j] = ret.D[j - 1] + t[a[j - 1]][a[j]];
+				ret.B[j] = dmax(ret.A[j], input[a[j]].e);
+				ret.D[j] = ret.B[j] + input[a[j]].d;
+				_D[a[j]] = ret.D[j];
+				ret.W[j] = ret.B[j] - ret.A[j];
+			}
+			for (int j = i + 1; j < a.size(); j++){
+				if (0 < a[i] && a[i] <= n){
+					ret.P[i] = -ret.B[i] + _D[a[i] + n];
+				}
+			}
+
+		}
+		double vq = 0, vd = 0, vw = 0, vt = 0;
+		vector<double> temp(a.size());
+		for (int i = 0; i < a.size(); i++){
+			double _Q = 0;
+			_Q += input[a[i]].q;
+			if (_Q > Q){
+				vq += _Q - Q;
+			}
+			if (ret.B[i] > input[a[i]].l){
+				vw += ret.B[i] - input[a[i]].l;
+			}
+			else if (ret.B[i] < input[a[i]].e){
+				vw += -ret.B[i] + input[a[i]].e;
+			}
+			if (a[i] > n){
+				double ti = ret.B[i] - _D[a[i] - n];
+				if (ti > L){
+					vt += ti - L;
+				}
+			}
+		}
+		ret.duration = ret.D[a.size() - 1] - ret.D[0];
+		if (ret.duration > T){
+			vd += ret.duration - T;
+		}
+		ret.q = vq;
+		ret.d = vd;
+		ret.w = vw;
+		ret.t = vt;
+
+
+		return ret;
+	}
+
+	double F(int a, int q, vector<int> r,route ret){
+		double res = DBL_MAX;
+		for (int i = a; i <= q; i++){
+			double tem2 = 0;
+			for (int j = a; j < i; j++){
+				tem2 += t[r[j]][r[j + 1]];
+			}
+			double tem = input[r[i]].l - (ret.B[a] + tem2);
+			if (res > tem){
+				res = tem;
+			}
+		}
+		return res;
+	}
+
+	double F_new(int a, int q, vector<int> r, route ret){
+		double res = DBL_MAX;
+		for (int i = a; i <= q; i++){
+			double tem2 = 0;
+			for (int j = a+1; j <= i; j++){
+				tem2 += ret.W[j];
+			}
+			double tem = tem2 + dmax(dmin(input[r[i]].l-ret.B[i],L-ret.P[i]),0);
+			if (res > tem){
+				res = tem;
+			}
+		}
+		return res;
+	}
 
 	void simple_insertion_1(vector<int> &rout, int v){
 		int va, vb;
@@ -469,20 +690,35 @@ public:
 		s.total_f = f;
 		return f;
 	}
+	double c_f(solution &s){
+		double f = 0;
+		int si = s.rout.size();
+		for (int i = 0; i < si; i++){
+			route r = route_evaluation(s.rout[i]);
+			f += r.f;
+		}
+		return f;
+	}
 
-	void tsolve(){
-		alpha = 10;
+	double tsolve(){
+
+		//ofstream out;
+		//out.open(nam + "_solve",ios::app);
+		//vector<double> res(10);
+		alpha = 1;
 		beta = 0.1;
-		gamma = 1;
+		gamma = 10;
 		tau = 1;
-		delta = 0.1;
+		delta = 0.5;
 		f = 0;
 		solution s = gen_init_ramdon();
 
-		int iter_best, iter_end = 40;
+		start_t = clock();
+
+		int iter_best, iter_end = 500;
 		int iter_internal = 10;
-		int theta = iter_end / 40;
-		int lambda = 100;
+		int theta = (int)7.5*log10(iter_end);
+		int lambda = 0.015;
 		for (int i = 0; i < n+1; i++){
 			vector<int> tem(m);
 			for (int j = 0; j < m; j++){
@@ -492,6 +728,9 @@ public:
 		}
 
 		for (int iter = 0; iter < iter_end; iter++){
+			//delta = 7.5*log10(iter);
+
+
 			f = total_f(s);
 			double minf = 10000;
 			int mini = -1;
@@ -519,9 +758,9 @@ public:
 					simple_insertion_2(r1, i);
 					double f01 = objective_f(r0);
 					double f11 = objective_f(r1);
-					newf = f01 + f11 - f00 - f10 + rho[i][j] * lambda;
-					cout << "i:" << i << " j:" << j << " newf: " << newf << " minf:" << minf << endl;
-					cout << " f01:" << f01 << " f11:" << f11 << " f00" << f00 << " f10" << f10 << " rho:" << rho[i][j] << endl;
+					newf = f01 + f11 - f00 - f10 + rho[i][j] * lambda*total_f(s)*sqrt(n*m);
+					//cout << "i:" << i << " j:" << j << " newf: " << newf << " minf:" << minf << endl;
+					//cout << " f01:" << f01 << " f11:" << f11 << " f00" << f00 << " f10" << f10 << " rho:" << rho[i][j] << endl;
 					if (tindexof(tabulist, ta) > -1 && f + newf > bestf){
 						//dbg = true;
 						continue;
@@ -554,7 +793,7 @@ public:
 				tabu_push(tabulist, ta, theta);
 			}
 			if (iter%iter_internal == 0){
-				cout << "internal iter"<<endl;
+				//cout << "internal iter"<<endl;
 				for (int k = 1; k <=n; k++){
 					vector<int> *ss = &s.rout[s.trace[k]];
 					tremove(*ss, k);
@@ -565,6 +804,9 @@ public:
 			f = total_f(s);
 			bool fea = is_fea(s);
 			double ratio = 1 + delta;
+			
+			//out << "times: " << iter << " feasible: " << fea << " f: " << f << endl;
+			
 			if (fea){
 				ratio = 1 / ratio;
 				if (!bestfound || bestf>f){
@@ -574,7 +816,7 @@ public:
 					//time_best = time();
 
 					iter_best = iter;
-					cout << "better f" << f << endl;
+					//cout << "better f" << f << endl;
 
 				}
 			}
@@ -583,7 +825,7 @@ public:
 			gamma *= ratio;
 			tau *= ratio;
 		}
-
+		end_t = clock();
 		//time_end = time();
 		if (bestfound){
 			double dura = 0;
@@ -595,16 +837,18 @@ public:
 				waiting += dsum(ret.W);
 				transit += dsum(ret.T);
 			}
-			cout << "f:" << bestf << endl;
-			cout << "duration:" << dura << endl;
-			cout << "waiting:" << waiting << endl;
-			cout << "transit:" << transit << endl;
+			return bestf;
+			//out << "f:" << bestf << endl;
+			//out << "duration:" << dura << endl;
+			//out << "waiting:" << waiting << endl;
+			//out << "transit:" << transit << endl;
 		}
+		//out.close();
 	}
 
-	int dsum(vector<int> a){
-		int res = 0;
-		for (vector<int>::iterator it = a.begin(); it != a.end(); it++){
+	double dsum(vector<double> a){
+		double res = 0;
+		for (vector<double>::iterator it = a.begin(); it != a.end(); it++){
 			res += *it;
 		}
 		return res;
@@ -625,11 +869,38 @@ public:
 };
 
 void main(){
-
+	//tabu a("pr02");
+	//route t = a.route_evaluation(vector < int > {0,10,11,35,34,0});
 	
-	tabu a = tabu();
-	solution t = a.gen_init_ramdon();
-	a.tsolve();
+	double res = 0;
+	for (int j = 19; j < 20; j++){
+		
+		for (int i = 1; i < 2; i++){
+			
+			string s = "pr";
+			if (j < 10){ s = s + "0" + to_string(j); }
+			else{ s += to_string(j); }
+			tabu a(s);
+
+			double r = a.tsolve();
+			res += r;
+			double time = (double)(end_t - start_t) / CLOCKS_PER_SEC / 60;
+			//ofstream out;
+			//out.open(a.nam + "_solve", ios::app);
+			cout << "time(min): " << time <<" f: "<<r<< endl;
+			//out.close();
+		}
+	}
+	//cout << res  << endl;
+	
+	/*
+	route r = a.route_evaluation(vector < int > {0, 10, 11, 35, 34, 0});
+	double res = 0;
+	for (vector<double>::iterator it = r.W.begin(); it != r.W.end(); it++){
+		cout << *it << endl;
+		res += *it;
+	}
+	cout << "total W" << res << endl;
 	/*
 	for (int i = 0; i < 20; i++){
 		cout << "cost1：" << a.objective_f(t.rout[0]) << endl;

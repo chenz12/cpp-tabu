@@ -1,0 +1,43 @@
+﻿生成启动时间为 2016/4/18 22:32:02。
+     1>项目“C:\Users\panzer\Documents\visual studio 2013\Projects\tabu\tabu\tabu.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         D:\软件\visualstudio\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>main.cpp(340): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(359): warning C4244: “+=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(364): warning C4244: “+=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(375): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(386): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(388): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(403): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(463): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(473): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(545): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(552): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(561): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(580): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(647): warning C4244: “=”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(670): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(684): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(720): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(721): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+     1>main.cpp(834): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(858): warning C4018: “<”: 有符号/无符号不匹配
+     1>main.cpp(25): warning C4018: “<”: 有符号/无符号不匹配
+                 main.cpp(628): 参见对正在编译的函数 模板 实例化“int tindexof<int>(std::vector<int,std::allocator<_Ty>>,T)”的引用
+                 with
+                 [
+                     _Ty=int
+         ,            T=int
+                 ]
+       Link:
+         D:\软件\visualstudio\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\panzer\Documents\Visual Studio 2013\Projects\tabu\Release\tabu.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\panzer\Documents\Visual Studio 2013\Projects\tabu\Release\tabu.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\panzer\Documents\Visual Studio 2013\Projects\tabu\Release\tabu.lib" /MACHINE:X86 /PROFILE /SAFESEH Release\main.obj
+         正在生成代码
+     1>c:\users\panzer\documents\visual studio 2013\projects\tabu\tabu\main.cpp(847): warning C4715: “tabu::tsolve”: 不是所有的控件路径都返回值
+         已完成代码的生成
+         tabu.vcxproj -> C:\Users\panzer\Documents\Visual Studio 2013\Projects\tabu\Release\tabu.exe
+     1>已完成生成项目“C:\Users\panzer\Documents\visual studio 2013\Projects\tabu\tabu\tabu.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:02.86
